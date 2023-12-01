@@ -72,3 +72,9 @@ mqtt:
 ```
 
 This will create entities in HomeAssistant with the corresponding MQTT message topics and start to track the data.
+
+# To-Do
+- Integrate WiFi manager with MQTT settings
+- make MQTT username/password optional
+- extract the OBD AT commands to separate file
+- create file editor for the OBD commands
