@@ -53,6 +53,12 @@ mqtt:
       icon: mdi:lightning-bolt
       unit_of_measurement: "kWh"
       unique_id: "zoe.Energy"
+
+    - name: "Zoe - Odometer"
+      state_topic: "elm327report/result/Odometer"
+      icon: mdi:counter
+      unit_of_measurement: "km"
+      unique_id: "zoe.Odometer"
       
     - name: "Zoe - Dongle status"
       state_topic: "elm327report/status"
