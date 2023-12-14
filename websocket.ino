@@ -20,7 +20,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
                                " c - send AT command\n"
                                " R - Response to expect\n"
                                " T - Response must be exactt\n"
-                               " H - handshake\n"
+                               " H - handshake 1\n"
+                               " I - handshake 201\n"
+                               " J - handshake 101\n"
+                               " K - handshake 301\n"
                                );
 
       } else if (payload[0] == 'd') {
@@ -43,13 +46,18 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         lastResponseOK = 1;
         
       } else if (payload[0] == 'I') {
-        webSocket.broadcastTXT("Setting handshake step to 21");
+        webSocket.broadcastTXT("Setting handshake step to 201");
         handShakeStep = 201;
         lastResponseOK = 1;
         
       } else if (payload[0] == 'J') {
         webSocket.broadcastTXT("Setting handshake step to 101");
         handShakeStep = 101;
+        lastResponseOK = 1;
+        
+      } else if (payload[0] == 'K') {
+        webSocket.broadcastTXT("Setting handshake step to 301");
+        handShakeStep = 301;
         lastResponseOK = 1;
         
       } else if (payload[0] == 'c') {

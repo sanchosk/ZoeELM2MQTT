@@ -82,27 +82,6 @@ void checkResponse() {
 
   }
 
-  if ((handShakeStep == 220) && (lastResponseOK == 1)) {
-    // we have SoC response, let's process it
-    // 0562320C0DC2AAAA - 05 62320C - header, AAAA - footer
-    // 0DC2 - value in HEX, to be multiplied by 0.005 for Available Energy in kWh
-    String AvailableEnergy = elmResponse;
-    AvailableEnergy.replace("0562320C", "");
-    AvailableEnergy = AvailableEnergy.substring(0, 4);
-    
-    unsigned long AvailableEnergyl = 0;
-    char AvailableEnergyc[5];
-    AvailableEnergy.toCharArray(AvailableEnergyc, 5);
-    AvailableEnergyl = strtol(AvailableEnergyc, NULL, 16);
-    float AvailableEnergyf = 0.005 * AvailableEnergyl;
-        
-    webSocket.broadcastTXT("AvailableEnergy: " + String(AvailableEnergyf, 2));
-    mqtt_reconnect();
-    snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", AvailableEnergyf);
-    mqtt.publish("elm327report/result/AvailableEnergy", msg, true);
-
-  }
-
   if ((handShakeStep == 120) && (lastResponseOK == 1)) {
     // we have SoC response, let's process it
     // 056234510C0DC2AAAA - 05 623451 - header, AAAA - footer
@@ -132,6 +111,63 @@ void checkResponse() {
     
     handShakeStep = 201;
     lastResponseOK = 1;
+
+  }
+
+  if ((handShakeStep == 220) && (lastResponseOK == 1)) {
+    // we have SoC response, let's process it
+    // 0562320C0DC2AAAA - 05 62320C - header, AAAA - footer
+    // 0DC2 - value in HEX, to be multiplied by 0.005 for Available Energy in kWh
+    String AvailableEnergy = elmResponse;
+    AvailableEnergy.replace("0562320C", "");
+    AvailableEnergy = AvailableEnergy.substring(0, 4);
+    
+    unsigned long AvailableEnergyl = 0;
+    char AvailableEnergyc[5];
+    AvailableEnergy.toCharArray(AvailableEnergyc, 5);
+    AvailableEnergyl = strtol(AvailableEnergyc, NULL, 16);
+    float AvailableEnergyf = 0.005 * AvailableEnergyl;
+        
+    webSocket.broadcastTXT("AvailableEnergy: " + String(AvailableEnergyf, 2));
+    mqtt_reconnect();
+    snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", AvailableEnergyf);
+    mqtt.publish("elm327report/result/AvailableEnergy", msg, true);
+
+    // report successful, continue with next one
+    
+    handShakeStep = 301;
+    lastResponseOK = 1;
+
+  }
+
+  if ((handShakeStep == 319) && (lastResponseOK == 1)) {
+    // we have SoC response, let's process it
+    // new code: 624B9B
+    // 032220060662200601A497AA - 03 222006 - header, AA - footer
+    // 01A497 - value in HEX for Odometer status
+    // data for CAN responses from CanZE project in 
+    // https://github.com/fesch/CanZE/tree/master/app/src/main/assets/ZOE
+    // example data captured using canZE
+    // again big credit to KarelSvo on github
+    
+    String odometer = elmResponse;
+    odometer.replace("03222006", "");
+    odometer = odometer.substring(8, 14);
+    
+    unsigned long odometerl = 0;
+    char odometerc[7];
+    odometer.toCharArray(odometerc, 7);
+    odometerl = strtol(odometerc, NULL, 16);
+        
+    webSocket.broadcastTXT("Odometer: " + String(odometerl));
+    mqtt_reconnect();
+    snprintf (msg, MSG_BUFFER_SIZE, "%d", odometerl);
+    mqtt.publish("elm327report/result/Odometer", msg, true);
+
+    // report successful, continue with next one 
+//    nothing to continue with
+//    handShakeStep = 301;
+//    lastResponseOK = 1;
 
   }
 }
@@ -450,7 +486,7 @@ void handShake() {
       commandResponsePart = false;
       break;
     case 118:
-      commandToSend = "AT FC SH 7e4";
+      commandToSend = "AT FC SH 7E4";
       commandResponse = "OK>";
       commandResponsePart = false;
       break;
@@ -458,6 +494,104 @@ void handShake() {
       // this is the actual code for Available range in km
       commandToSend = "03 223451";
       commandResponse = "05623451";
+      commandResponsePart = true;
+      break;
+      
+
+      
+
+    // restart sequence for odometer
+    // huge thanks to GitHub user KarelSvo
+    
+    case 301:
+      commandToSend = "atws";
+      commandResponse = ">";
+      commandResponsePart = true;
+      break;
+    case 302:
+      commandToSend = "ate1";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 303:
+      commandToSend = "ats0";
+      commandResponse = "ats0OK>";
+      commandResponsePart = false;
+      break;
+    case 304:
+      commandToSend = "ath0";
+      commandResponse = "ath0OK>";
+      commandResponsePart = false;
+      break;
+    case 305:
+      commandToSend = "atl0";
+      commandResponse = "atl0OK>";
+      commandResponsePart = false;
+      break;
+    case 306:
+      commandToSend = "atcaf0";
+      commandResponse = "atcaf0OK>";
+      commandResponsePart = false;
+      break;
+    // KarelSvo/CanZE
+    case 307:
+      commandToSend = "atcfc1";
+      commandResponse = "atcfc1OK>";
+      commandResponsePart = false;
+      break;
+    case 308:
+      commandToSend = "AT SH 7E4";
+      commandResponse = "AT SH 7E4OK>";
+      commandResponsePart = false;
+      break;
+    case 309:
+      commandToSend = "AT FC SH 7E4";
+      commandResponse = "AT FC SH 7E4OK>";
+      commandResponsePart = false;
+      break;
+    case 310:
+      commandToSend = "AT FC SD 30 00 00";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 311:
+      commandToSend = "AT FC SM 1";
+      commandResponse = "AT FC SM 1OK>";
+      commandResponsePart = false;
+      break;
+    case 312:
+      commandToSend = "atsp6";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 313:
+      commandToSend = "AT ST FF";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 314:
+      commandToSend = "AT AT 0";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 315:
+      commandToSend = "AT SP 6";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 316:
+      commandToSend = " AT AT 1";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 317:
+      commandToSend = " AT CRA 7EC";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 318:
+      commandToSend = "03222006";
+      commandResponse = "03222006";
       commandResponsePart = true;
       break;
 
