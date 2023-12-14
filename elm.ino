@@ -160,9 +160,11 @@ void checkResponse() {
     odometerl = strtol(odometerc, NULL, 16);
         
     webSocket.broadcastTXT("Odometer: " + String(odometerl));
-    mqtt_reconnect();
-    snprintf (msg, MSG_BUFFER_SIZE, "%d", odometerl);
-    mqtt.publish("elm327report/result/Odometer", msg, true);
+    if (odometerl > 0) {
+      mqtt_reconnect();
+      snprintf (msg, MSG_BUFFER_SIZE, "%d", odometerl);
+      mqtt.publish("elm327report/result/Odometer", msg, true);
+    }
 
     // report successful, continue with next one 
 //    nothing to continue with
