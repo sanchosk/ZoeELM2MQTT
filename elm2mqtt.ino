@@ -87,8 +87,6 @@ void setup() {
   SerialBT.setTimeout(500);
   SerialBT.begin("esp32HUD", true);
 
-
-
   if (SerialBT.isClosed() || !SerialBT.connect(dongle_name))
   {
     Serial.println("Couldn't connect to OBD scanner");
