@@ -12,6 +12,7 @@ Make sure you install necessery libraries:
 - ArduinoOTA
 - NTPClient
 - PubSubClient
+- WebSockets (by Markus Sattler)
 Compile the code and upload to your ESP32 board.
 
 Get the ESP32 somewhere near the car, plug the ELM dongle to the car OBD2 port and turn the ESP32 on.
