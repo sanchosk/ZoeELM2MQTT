@@ -10,7 +10,6 @@ Set the board type in Arduino to WEMOS LOLIN32.
 Change the partition scheme to "Minimal SPIFFS (Large APPS with OTA)". Otherwise the code will not fit into memory.
 Make sure you install necessery libraries:
 - ArduinoOTA
-- NTPClient
 - PubSubClient
 - WebSockets (by Markus Sattler)
 Compile the code and upload to your ESP32 board.
