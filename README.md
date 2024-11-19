@@ -18,6 +18,14 @@ Get the ESP32 somewhere near the car, plug the ELM dongle to the car OBD2 port a
 The ESP will connect to your local network and will start to try to connect to the dongle.
 The ELM will only work while the car is charging or doors are open, otherwise the battery data will not be available.
 
+## Warning on ESP32 version
+As Espressif continues to develop the ESP32 ecosystem, some parts become incompatible over time.
+The version of this code works with ESP32 version 2.0.17.
+You might need to downgrate your current version of boards definition in order for the code to compile correctly.
+See the image no how to do this.
+![image](https://github.com/user-attachments/assets/98453fbf-cad8-4ddc-937b-4d788e4c9b78)
+
+
 # Monitoring
 There is a possibility to monitor the ESP32 communication using in-built websocket server.
 Connect to the IP address of the ESP32 and you'll be present with basic interface.
