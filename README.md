@@ -23,6 +23,7 @@ As Espressif continues to develop the ESP32 ecosystem, some parts become incompa
 The version of this code works with ESP32 version 2.0.17.
 You might need to downgrate your current version of boards definition in order for the code to compile correctly.
 See the image no how to do this.
+
 ![image](https://github.com/user-attachments/assets/98453fbf-cad8-4ddc-937b-4d788e4c9b78)
 
 
