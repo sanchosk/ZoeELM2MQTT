@@ -31,7 +31,7 @@ WebSocketsServer webSocket = WebSocketsServer(81);
 // main look variables
 unsigned long currentMillis = 0UL;    // main time-counting var
 unsigned long rNextRun = 0UL;         // Next time display should start
-unsigned long rInt = 60000UL;         // Interval for reconnect
+unsigned long rInt = 30000UL;         // Interval for reconnect
 unsigned long lastSend = 0UL;         // last sent time in millis
 String commandToSend = "";            // command to send using ELM327
 String commandResponse = "";          // response to expect
@@ -53,7 +53,7 @@ void setup() {
   }
 
   int counter = 0;
-  while ((WiFi.status() != WL_CONNECTED) & (counter < 10)) {
+  while ((WiFi.status() != WL_CONNECTED) & (counter < 30)) { // More retries
     delay(250);
     Serial.println("Wifi status: " + String(WiFi.status()));
     counter++;
@@ -83,7 +83,7 @@ void setup() {
 
   // starting the BT serial to connect to ELM327
   SerialBT.setPin(dongle_pin);
-  SerialBT.setTimeout(500);
+  SerialBT.setTimeout(2000);
   SerialBT.begin("esp32HUD", true);
 
   if (SerialBT.isClosed() || !SerialBT.connect(dongle_name))
@@ -103,13 +103,13 @@ void setup() {
 void loop() {
   currentMillis = millis();
 
-  if ((SerialBT.available() > 0) && (currentMillis - lastSend > 150)) {
+  if ((SerialBT.available() > 0) && (currentMillis - lastSend > 250)) { //150 before
     checkResponse();
   }
 
   if (commandToSend.length() > 0) sendCommand();
 
-  if ((currentMillis - lastSend > 50) & (lastResponseOK) & (handShakeStep > 0)) {
+  if ((currentMillis - lastSend > 150) & (lastResponseOK) & (handShakeStep > 0)) { //50 before
     lastResponseOK = 0;
     handShake();
     handShakeStep++;
