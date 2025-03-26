@@ -44,13 +44,13 @@ mqtt:
       state_topic: "elm327report/result/SoC"
       unique_id: "zoe.SoC"
       unit_of_measurement: "%"
-      icon: |-
-        {% if states("zoe.SoC") | float > 80 %}
-        mdi:battery-80
-        {% else %}
-        mdi:battery-10
-        {% end if %}
-      
+
+    - name: "Zoe - Odometer"
+      state_topic: "elm327report/result/Odometer"
+      icon: mdi:gauge-full
+      unit_of_measurement: "km"
+      unique_id: "zoe.Odometer"      
+            
     - name: "Zoe - Available range"
       state_topic: "elm327report/result/AvailableRange"
       icon: mdi:gauge-low
@@ -79,6 +79,19 @@ mqtt:
       unique_id: "zoe.ElmHeartbeat"
 
 ```
+
+template:
+  sensor:
+  
+    - name: "Zoe SoC icon"    
+      state: "{{ states('sensor.zoe_state_of_charge') }}"
+      unit_of_measurement: "%"
+      icon: >
+         {% if states('sensor.zoe_state_of_charge') | float(0) < 80 %}
+           mdi:battery-10
+         {% else %}
+           mdi:battery-80
+         {% endif %}
 
 This will create entities in HomeAssistant with the corresponding MQTT message topics and start to track the data.
 
