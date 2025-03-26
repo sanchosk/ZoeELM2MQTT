@@ -69,12 +69,13 @@ void checkResponse() {
     SoC.toCharArray(SoCc, 5);
     SoCl = strtol(SoCc, NULL, 16);
     float SoCf = 0.02 * SoCl;
-        
-    webSocket.broadcastTXT("SoC: " + String(SoCf, 2));
-    snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", SoCf);
-    mqtt_reconnect();
-    mqtt.publish("elm327report/result/SoC", msg, true);
-
+    
+    if (SoCf > 1 && SoCf <= 100) { // Eliminates unconsistent values
+      webSocket.broadcastTXT("SoC: " + String(SoCf, 2));
+      snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", SoCf);
+      mqtt_reconnect();
+      mqtt.publish("elm327report/result/SoC", msg, true);
+    }
     // report successful, continue with next one
     
     handShakeStep = 101;
@@ -95,7 +96,7 @@ void checkResponse() {
     AvailableRange.toCharArray(AvailableRangec, 5);
     AvailableRangel = strtol(AvailableRangec, NULL, 16);
 
-    if (AvailableRangel < 300) {
+    if (AvailableRangel < 380 && AvailableRangel > 10) { // Eliminates unconsistent values
       webSocket.broadcastTXT("AvailableRange: " + String(AvailableRangel));
       mqtt_reconnect();
       snprintf (msg, MSG_BUFFER_SIZE, "%d", AvailableRangel);
@@ -127,7 +128,8 @@ void checkResponse() {
     AvailableEnergy.toCharArray(AvailableEnergyc, 5);
     AvailableEnergyl = strtol(AvailableEnergyc, NULL, 16);
     float AvailableEnergyf = 0.005 * AvailableEnergyl;
-        
+    
+    if (AvailableEnergyf > 1 && AvailableEnergyf < 60) // Ok for Zoe 20, 40, 50
     webSocket.broadcastTXT("AvailableEnergy: " + String(AvailableEnergyf, 2));
     mqtt_reconnect();
     snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", AvailableEnergyf);
