@@ -78,6 +78,13 @@ mqtt:
       state_topic: "elm327report/heartbeat"
       unique_id: "zoe.ElmHeartbeat"
 
+    - name: "Zoe - Odometer"
+      state_topic: "elm327report/result/Odometer"
+      icon: mdi:lightning-bolt
+      unit_of_measurement: "km"
+      state_class: total
+      unique_id: "zoe.Odometer"
+
 ```
 
 This will create entities in HomeAssistant with the corresponding MQTT message topics and start to track the data.
