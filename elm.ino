@@ -99,7 +99,7 @@ void checkResponse() {
       webSocket.broadcastTXT("AvailableRange: " + String(AvailableRangel));
       mqtt_reconnect();
       snprintf (msg, MSG_BUFFER_SIZE, "%d", AvailableRangel);
-      mqtt.publish("elm327report/result/AvailableRange", msg, true);
+      mqtt.publish("elm327report/result/AvailableRange", msg, false);
     } else {
       webSocket.broadcastTXT("AvailableRange over limit: " + String(AvailableRangel));
       mqtt_reconnect();
@@ -131,11 +131,11 @@ void checkResponse() {
     webSocket.broadcastTXT("AvailableEnergy: " + String(AvailableEnergyf, 2));
     mqtt_reconnect();
     snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", AvailableEnergyf);
-    mqtt.publish("elm327report/result/AvailableEnergy", msg, true);
+    mqtt.publish("elm327report/result/AvailableEnergy", msg, false);
 
     // report successful, continue with next one
     
-    handShakeStep = 301;
+    handShakeStep = 401;
     lastResponseOK = 1;
 
   }
@@ -162,7 +162,32 @@ void checkResponse() {
     webSocket.broadcastTXT("Odometer: " + String(odometerl));
     mqtt_reconnect();
     snprintf (msg, MSG_BUFFER_SIZE, "%d", odometerl);
-    mqtt.publish("elm327report/result/Odometer", msg, true);
+    mqtt.publish("elm327report/result/Odometer", msg, false);
+
+    // report successful, continue with next one 
+    // nothing to continue with
+    handShakeStep = 301;
+    lastResponseOK = 1;
+
+  }
+
+  if ((handShakeStep == 420) && (lastResponseOK == 1)) {
+    // charging cable connected
+    // response: 22339D0462339D00AAAAAA - no cable
+    // response: 0462339D01AAAAAA - with cable
+    // Take last 8 chars, remove AAAAAAA, if it includes 01 - we have cable, otherwise not
+    // https://github.com/fesch/CanZE/tree/master/app/src/main/assets/ZOE
+    // again big credit to KarelSvo on github
+    
+    String cablePresence = elmResponse;
+    
+    unsigned long cablePresenceL = 2;
+    if (cablePresence.indexOf("01AAAA") > 0) cablePresenceL = 1;
+    if (cablePresence.indexOf("00AAAA") > 0) cablePresenceL = 0;
+
+    mqtt_reconnect();
+    snprintf (msg, MSG_BUFFER_SIZE, "%d", cablePresenceL);
+    mqtt.publish("elm327report/result/CablePresent", msg, false);
 
     // report successful, continue with next one 
 //    nothing to continue with
@@ -592,6 +617,107 @@ void handShake() {
     case 318:
       commandToSend = "03222006";
       commandResponse = "03222006";
+      commandResponsePart = true;
+      break;
+
+
+    // restart sequence for plug connected
+    // huge thanks to GitHub user KarelSvo
+    
+    case 401:
+      commandToSend = "atws";
+      commandResponse = ">";
+      commandResponsePart = true;
+      break;
+    case 402:
+      commandToSend = "ate1";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 403:
+      commandToSend = "ats0";
+      commandResponse = "ats0OK>";
+      commandResponsePart = false;
+      break;
+    case 404:
+      commandToSend = "ath0";
+      commandResponse = "ath0OK>";
+      commandResponsePart = false;
+      break;
+    case 405:
+      commandToSend = "atl0";
+      commandResponse = "atl0OK>";
+      commandResponsePart = false;
+      break;
+    case 406:
+      commandToSend = "atcaf0";
+      commandResponse = "atcaf0OK>";
+      commandResponsePart = false;
+      break;
+    // KarelSvo/CanZE
+    case 407:
+      commandToSend = "atcfc1";
+      commandResponse = "atcfc1OK>";
+      commandResponsePart = false;
+      break;
+    case 408:
+      commandToSend = "AT SH 7E4";
+      commandResponse = "AT SH 7E4OK>";
+      commandResponsePart = false;
+      break;
+    case 409:
+      commandToSend = "AT FC SH 7E4";
+      commandResponse = "AT FC SH 7E4OK>";
+      commandResponsePart = false;
+      break;
+    case 410:
+      commandToSend = "AT FC SD 30 00 00";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 411:
+      commandToSend = "AT FC SM 1";
+      commandResponse = "AT FC SM 1OK>";
+      commandResponsePart = false;
+      break;
+    case 412:
+      commandToSend = "atsp6";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 413:
+      commandToSend = "AT ST FF";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 414:
+      commandToSend = "AT AT 0";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 415:
+      commandToSend = "AT SP 6";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 416:
+      commandToSend = " AT AT 0";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 417:
+      commandToSend = " AT CRA 7EC";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 418:
+      commandToSend = " AT FC SH 7E4";
+      commandResponse = "OK>";
+      commandResponsePart = true;
+      break;
+    case 419:
+      commandToSend = "0322339D";
+      commandResponse = "0462339D";
       commandResponsePart = true;
       break;
 

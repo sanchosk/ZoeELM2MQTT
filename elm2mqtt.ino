@@ -3,9 +3,9 @@
 #include <HTTPClient.h>
 #include <ArduinoOTA.h>
 #include <WebSocketsServer.h>
-#include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <EEPROM.h>
+#include <ArduinoJson.h>
 
 #include <PubSubClient.h>
 #include "BluetoothSerial.h"

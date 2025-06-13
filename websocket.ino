@@ -24,6 +24,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
                                " I - handshake 201\n"
                                " J - handshake 101\n"
                                " K - handshake 301\n"
+                               " L - handshake 401\n"
+                               " j - test JSON\n"
                                );
 
       } else if (payload[0] == 'd') {
@@ -58,6 +60,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
       } else if (payload[0] == 'K') {
         webSocket.broadcastTXT("Setting handshake step to 301");
         handShakeStep = 301;
+        lastResponseOK = 1;
+        
+      } else if (payload[0] == 'L') {
+        webSocket.broadcastTXT("Setting handshake step to 401");
+        handShakeStep = 401;
         lastResponseOK = 1;
         
       } else if (payload[0] == 'c') {
@@ -95,7 +102,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         snprintf (msg, MSG_BUFFER_SIZE, "%3.2f", SoCf);
         mqtt_reconnect();
         mqtt.publish("elm327report/soc", msg);        
-
+/*
+      } else if (payload[0] == 'j') {
+        webSocket.broadcastTXT("Running json test " + String(getJson()));
+*/
       } else if (payload[0] != 'p') webSocket.broadcastTXT(payload);
       break;
       
