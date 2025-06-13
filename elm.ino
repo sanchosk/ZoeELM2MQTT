@@ -135,7 +135,7 @@ void checkResponse() {
 
     // report successful, continue with next one
     
-    handShakeStep = 401;
+    handShakeStep = 301;
     lastResponseOK = 1;
 
   }
@@ -166,7 +166,7 @@ void checkResponse() {
 
     // report successful, continue with next one 
     // nothing to continue with
-    handShakeStep = 301;
+    handShakeStep = 401;
     lastResponseOK = 1;
 
   }
