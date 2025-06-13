@@ -5,6 +5,7 @@
 #include <WebSocketsServer.h>
 #include <WiFiUdp.h>
 #include <EEPROM.h>
+#include <ArduinoJson.h>
 
 #include <PubSubClient.h>
 #include "BluetoothSerial.h"
