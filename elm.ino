@@ -625,97 +625,116 @@ void handShake() {
     // huge thanks to GitHub user KarelSvo
     
     case 401:
+      // ATWS = warm start
       commandToSend = "atws";
       commandResponse = ">";
       commandResponsePart = true;
       break;
     case 402:
+      // ATE1 = echo ON
       commandToSend = "ate1";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 403:
+      // ATS0 = do not print spaces
       commandToSend = "ats0";
       commandResponse = "ats0OK>";
       commandResponsePart = false;
       break;
     case 404:
+      // ATH0 = headers off
       commandToSend = "ath0";
       commandResponse = "ath0OK>";
       commandResponsePart = false;
       break;
     case 405:
+      // ATL0 = linefeeds off
       commandToSend = "atl0";
       commandResponse = "atl0OK>";
       commandResponsePart = false;
       break;
     case 406:
+      // ATCAF0 = CAN automatic formatting OFF
       commandToSend = "atcaf0";
       commandResponse = "atcaf0OK>";
       commandResponsePart = false;
       break;
     // KarelSvo/CanZE
     case 407:
+      // ATCFC1 = CAN flow control ON
       commandToSend = "atcfc1";
       commandResponse = "atcfc1OK>";
       commandResponsePart = false;
       break;
     case 408:
+      // SH 7e4 = Set header to 7E4
       commandToSend = "AT SH 7E4";
       commandResponse = "AT SH 7E4OK>";
       commandResponsePart = false;
       break;
     case 409:
+      // FC SH 7e4 = Set flow control header to 7E4
       commandToSend = "AT FC SH 7E4";
       commandResponse = "AT FC SH 7E4OK>";
       commandResponsePart = false;
       break;
     case 410:
+      // FC SD 300000 = set flow control header to 300000
       commandToSend = "AT FC SD 30 00 00";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 411:
+      // FC SM 1 = flow control set mode to 1
       commandToSend = "AT FC SM 1";
       commandResponse = "AT FC SM 1OK>";
       commandResponsePart = false;
       break;
     case 412:
+      // SP6 = set protocol to 6 and save it
       commandToSend = "atsp6";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 413:
+      // ST FF = timeout to 255 * 4ms (1020ms)
       commandToSend = "AT ST FF";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 414:
+      // AT 0 = adaptive timing off
       commandToSend = "AT AT 0";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 415:
+      // again set protocol and save
       commandToSend = "AT SP 6";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 416:
+      // again timing off
       commandToSend = " AT AT 0";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 417:
+      // set CAN address to 7EC
       commandToSend = " AT CRA 7EC";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 418:
+      // set flow control header 7E4
       commandToSend = " AT FC SH 7E4";
       commandResponse = "OK>";
       commandResponsePart = true;
       break;
     case 419:
+      // actual command
       commandToSend = "0322339D";
       commandResponse = "0462339D";
       commandResponsePart = true;
